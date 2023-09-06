@@ -1,0 +1,58 @@
+@baseUrl = http://localhost:3333
+<<<<<<< HEAD
+@authToken = {{authenticate.response.body.access_token}}
+
+### @name create_account
+=======
+
+# @name create_account
+>>>>>>> 5097d36fd97537bf388fcde4f6a040021efa6b47
+POST {{baseUrl}}/accounts
+Content-Type: application/json
+
+{
+  "name":"Elioenay Silva",
+  "email":"eli@app.com",
+  "password":"123456"
+}
+
+<<<<<<< HEAD
+### @name authenticate
+=======
+
+# @name authenticate
+>>>>>>> 5097d36fd97537bf388fcde4f6a040021efa6b47
+POST {{baseUrl}}/sessions
+Content-Type: application/json
+
+{
+  "email":"eli@app.com",
+  "password":"123456"
+}
+
+<<<<<<< HEAD
+### @name create_question
+=======
+###
+@authToken = {{authenticate.response.body.access_token}}
+
+
+# @name create_question
+>>>>>>> 5097d36fd97537bf388fcde4f6a040021efa6b47
+POST {{baseUrl}}/questions
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+<<<<<<< HEAD
+{
+  "title":"Nova pergunta 2",
+  "content":"Conteúdo da pergunta"
+}
+
+### @name fetch_recent_questions
+GET {{baseUrl}}/questions
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+=======
+>>>>>>> 5097d36fd97537bf388fcde4f6a040021efa6b47
+
