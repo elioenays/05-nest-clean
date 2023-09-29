@@ -11,7 +11,7 @@ import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 import { z } from 'zod'
 import { CurrentUser } from '@/infra/auth/current-user-decorator'
 import { UserPayload } from '@/infra/auth/jwt.strategy'
-import { PrismaService } from '@/infra/prisma/prisma.service'
+import { PrismaService } from '@/infra/database/prisma/prisma.service'
 
 const createQuestionBodySchema = z.object({
   title: z.string(),
@@ -30,7 +30,7 @@ export class CreateQuestionController {
   async handle(
     @Body(new ZodValidationPipe(createQuestionBodySchema))
     body: CreateQuestionBodySchema,
-    @CurrentUser() user: UserPayload,
+    @CurrentUser() user: UserPayload
   ) {
     const { content, title } = body
 
