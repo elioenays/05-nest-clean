@@ -6,11 +6,14 @@ import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class PrismaAnswersRepository implements AnswersRepository {
-  async findById(id: string) {
+  async findById(id: string): Promise<Answer | null> {
     throw new Error('Method not implemented.')
   }
 
-  async findManyByQuestionId(questionId: string, params: PaginationParams) {
+  async findManyByQuestionId(
+    questionId: string,
+    params: PaginationParams
+  ): Promise<Answer[]> {
     throw new Error('Method not implemented.')
   }
 
