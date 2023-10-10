@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Post,
@@ -10,6 +11,9 @@ import { compare } from 'bcryptjs'
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
 import { z } from 'zod'
+import { AuthenticateStudentUseCase } from '@/domain/forum/application/use-cases/authenticate-student'
+import { WrongCredentialsError } from '@/domain/forum/application/use-cases/errors/wrong-credentials-error'
+import { Public } from '@/infra/auth/public'
 
 const authenticateBodySchema = z.object({
   email: z.string().email(),
@@ -19,10 +23,10 @@ const authenticateBodySchema = z.object({
 type AuthenticateBodySchema = z.infer<typeof authenticateBodySchema>
 
 @Controller('/sessions')
+@Public()
 export class AuthenticateController {
   constructor(
-    private readonly jwt: JwtService,
-    private readonly prisma: PrismaService
+    private readonly authenticateStudent: AuthenticateStudentUseCase
   ) {}
 
   @Post()
@@ -30,20 +34,21 @@ export class AuthenticateController {
   async handle(@Body() body: AuthenticateBodySchema) {
     const { email, password } = body
 
-    const user = await this.prisma.user.findUnique({ where: { email } })
+    const result = await this.authenticateStudent.execute({ email, password })
 
-    if (!user) {
-      throw new UnauthorizedException('User credentials do not match')
+    if (result.isLeft()) {
+      const error = result.value
+
+      switch (error.constructor) {
+        case WrongCredentialsError:
+          throw new UnauthorizedException(error.message)
+        default:
+          throw new BadRequestException(error.message)
+      }
     }
 
-    const isPasswordValid = await compare(password, user.password)
+    const { accessToken } = result.value
 
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('User credentials do not match')
-    }
-
-    const acessToken = this.jwt.sign({ sub: user.id })
-
-    return { access_token: acessToken }
+    return { access_token: accessToken }
   }
 }
